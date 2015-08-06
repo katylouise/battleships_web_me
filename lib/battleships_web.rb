@@ -64,6 +64,18 @@ class BattleshipsWeb < Sinatra::Base
     $game.player_2.place_ship(Ship.send(:aircraft_carrier), :J4, :vertically)
   end
 
+  @coordinate_array = []
+
+  def generate_computer_coordinates
+    coordinate = [*('A'..'J')].shuffle[1,1].join + [*('1'..'10')].shuffle[1,1].join
+    coordinate.to_sym
+  end
+
+
+  def coordinate_skipper
+
+  end
+
   set :views, Proc.new { File.join(root, "..", "views") }
   # start the server if ruby file executed directly
   run! if app_file == $0
