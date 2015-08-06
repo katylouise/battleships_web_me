@@ -1,4 +1,9 @@
 Feature: Playing a game
+
+  Before do
+    $game = Game.new(Player, Board)
+  end
+
   Scenario: Placing ships
   Given I am on "/game"
   When I fill in "coordinate" with "A1"

@@ -47,7 +47,7 @@ class BattleshipsWeb < Sinatra::Base
   post '/gameplay' do
     @coordinate = params[:coordinate]
     @player_1_result = $game.player_1.shoot(@coordinate.to_sym)
-    @player_2_result = $game.player_2.shoot(:A3)
+    @player_2_result = $game.player_2.shoot(generate_computer_coordinates)
     redirect '/winner' if $game.has_winner?
     erb :gameplay
   end
@@ -64,16 +64,22 @@ class BattleshipsWeb < Sinatra::Base
     $game.player_2.place_ship(Ship.send(:aircraft_carrier), :J4, :vertically)
   end
 
-  @coordinate_array = []
+
+  $coordinate_array = []
+
 
   def generate_computer_coordinates
     coordinate = [*('A'..'J')].shuffle[1,1].join + [*('1'..'10')].shuffle[1,1].join
+    coordinate_skipper(coordinate)
     coordinate.to_sym
   end
 
-
-  def coordinate_skipper
-
+  def coordinate_skipper(coordinate)
+    if $coordinate_array.include?(coordinate)
+      generate_computer_coordinates
+    else
+      $coordinate_array << coordinate
+    end
   end
 
   set :views, Proc.new { File.join(root, "..", "views") }
