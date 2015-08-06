@@ -46,7 +46,12 @@ class BattleshipsWeb < Sinatra::Base
   post '/gameplay' do
     @coordinate = params[:coordinate]
     @result = $game.player_1.shoot(@coordinate.to_sym)
+    redirect '/winner' if $game.has_winner?
     erb :gameplay
+  end
+
+  get '/winner' do
+    erb :winner
   end
 
   def place_computer_ships
