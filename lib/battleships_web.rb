@@ -37,15 +37,11 @@ class BattleshipsWeb < Sinatra::Base
   get '/welcome' do
     if $players.count == 1
       @player_1 = session[:name]
-      p "#{@player_1} Player 1"
       "Welcome #{@player_1}.  You are Player 1"
     else
       @player_2 = session[:name]
-      p "#{@player_2} Player 2"
       "Welcome #{@player_2}.  You are Player 2"
     end
-
-
 
   end
 
