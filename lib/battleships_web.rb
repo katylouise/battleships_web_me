@@ -4,6 +4,14 @@ require 'battleships'
 
 class BattleshipsWeb < Sinatra::Base
 
+  # def self.player_1
+  #   @@player_1
+  # end
+
+  # def self.player_2
+  #   @@player_2
+  # end
+
   enable :sessions
 
   $game = Game.new(Player, Board)
@@ -18,13 +26,29 @@ class BattleshipsWeb < Sinatra::Base
 
   post '/name' do
     session[:name] = params[:name]
+    @player = session[:name]
+    $players << @player
     redirect '/register' if session[:name] == ""
     redirect '/welcome'
   end
 
+  $players = []
+
   get '/welcome' do
-    erb :welcome
+    if $players.count == 1
+      @player_1 = session[:name]
+      p "#{@player_1} Player 1"
+      "Welcome #{@player_1}.  You are Player 1"
+    else
+      @player_2 = session[:name]
+      p "#{@player_2} Player 2"
+      "Welcome #{@player_2}.  You are Player 2"
+    end
+
+
+
   end
+
 
   get '/game' do
     erb :game
