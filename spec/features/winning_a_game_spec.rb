@@ -1,7 +1,10 @@
 require 'spec_helper.rb'
 
 feature 'A player wins the game' do
-  let(:game) { double(:game) }
+  before(:each) do
+    $game = Game.new(Player, Board)
+  end
+
   scenario 'Go to win page' do
     visit '/gameplay'
     helper_sink_ships
