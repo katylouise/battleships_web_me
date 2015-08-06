@@ -27,7 +27,6 @@ class BattleshipsWeb < Sinatra::Base
   end
 
   get '/game' do
-    place_computer_ships
     erb :game
   end
 
@@ -40,6 +39,7 @@ class BattleshipsWeb < Sinatra::Base
   end
 
   get '/gameplay' do
+    place_computer_ships
     erb :gameplay
   end
 
