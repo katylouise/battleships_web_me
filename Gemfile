@@ -1,13 +1,15 @@
 source 'https://rubygems.org'
-
-gem 'sinatra'
 gem 'battleships'
+gem 'cucumber'
+gem 'cucumber-sinatra'
+gem 'sinatra'
+gem 'sinatra-session'
 
 group :development, :test do
   gem 'capybara'
-  gem 'cucumber'
-  gem 'cucumber-sinatra'
   gem 'launchy'
   gem 'rspec'
+  gem 'rspec-sinatra'
   gem 'shotgun'
 end
+

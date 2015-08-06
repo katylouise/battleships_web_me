@@ -1,8 +1,11 @@
-Feature: Playing a game
-  In order to play battleships
-  As a human being
-  I want to interact with the board
+Feature: Setting up game
+  Scenario: Placing ships
+  Given I am on "/game"
+  When I fill in "coordinate" with "A1"
+  When I select "Destroyer" from "ship"
+  When I choose "Horizontal"
+  When I press "Submit"
+  Then I should see "DD"
 
-  Scenario: Seeing the board
-    Given I am on the game page
-    Then I should see "ABCDEFGHIJ"
+
+
