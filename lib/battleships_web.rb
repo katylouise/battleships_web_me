@@ -35,6 +35,7 @@ class BattleshipsWeb < Sinatra::Base
     $game.player_1.place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
 
     redirect '/gameplay' if $game.player_1.board.ships.count > 1
+
     erb :game
   end
 
@@ -45,7 +46,8 @@ class BattleshipsWeb < Sinatra::Base
 
   post '/gameplay' do
     @coordinate = params[:coordinate]
-    @result = $game.player_1.shoot(@coordinate.to_sym)
+    @player_1_result = $game.player_1.shoot(@coordinate.to_sym)
+    @player_2_result = $game.player_2.shoot(:A3)
     redirect '/winner' if $game.has_winner?
     erb :gameplay
   end
