@@ -24,12 +24,16 @@ class BattleshipsWeb < Sinatra::Base
     erb :form
   end
 
-  post '/name' do
+  post '/register' do
     session[:name] = params[:name]
     @player = session[:name]
     $players << @player
     redirect '/register' if session[:name] == ""
-    redirect '/welcome'
+    if params[:version] == 'one_player'
+      redirect '/game'
+    else
+      redirect '/welcome'
+    end
   end
 
   $players = []
