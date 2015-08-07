@@ -2,14 +2,14 @@
   <div style="float: left; width: 50%">
     <h1>Player 1: <%= session[:name] %></h1>
     <pre>
-      <%= $game.own_board_view(session[:player]) %>
+      <%= $game.own_board_view($game.send(session[:player])) %>
     </pre>
     <h2>Player 1: <%= @player_1_result %></h2>
   </div>
   <div style="float: right; width: 50%">
     <h1>Player 2: <%= @computer || "Enemy" %></h1>
     <pre>
-      <%= $game.opponent_board_view(session[:player]) %>
+      <%= $game.opponent_board_view($game.send(session[:player])) %>
     </pre>
     <h2>Player 2: <%= @player_2_result %></h2>
   </div>

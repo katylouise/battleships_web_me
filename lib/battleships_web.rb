@@ -4,14 +4,6 @@ require 'battleships'
 
 class BattleshipsWeb < Sinatra::Base
 
-  # def self.player_1
-  #   @@player_1
-  # end
-
-  # def self.player_2
-  #   @@player_2
-  # end
-
   enable :sessions
 
   $game = Game.new(Player, Board)
@@ -25,14 +17,16 @@ class BattleshipsWeb < Sinatra::Base
   end
 
   post '/register' do
+
     session[:name] = params[:name]
     session[:version] = params[:version]
     @player = session[:name]
     $players << @player
+
     redirect '/register' if session[:name] == ""
+
     if session[:version] == 'one_player'
       session[:player] = $game.player_1
-
       redirect '/game'
     else
       redirect '/welcome'
@@ -43,34 +37,51 @@ class BattleshipsWeb < Sinatra::Base
 
   get '/welcome' do
     if $players.count == 1
-      session[:player] = $game.player_1
-      p $game
-      p "------"
-      p session
-      p "------"
+      session[:player] = :player_1
+      p "Player:"
+      p $game.send(session[:player])
+      p "----------"
+      p "Opponent:"
+      p $game.send(session[:player]).opponent
+      p "----------"
     else
       $player_2 = session[:name]
-      session[:player] = $game.player_2
-      p $game
-      p "-------"
-      p session
+      session[:player] = :player_2
     end
     redirect '/game' if $players.count == 2
     erb :welcome
   end
 
+  def change_players!
+    current_player = session[:current_player]
+    return session[:current_player] = :player_1 unless current_player
+    if current_player == :player_1
+      session[:current_player] = :player_2
+    else
+      current_player = :player_1
+    end
+  end
 
   get '/game' do
     erb :game
   end
 
   post '/game' do
+    p session
     @parameters = params
-    session[:player].place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
-
-    if session[:player].board.ships.count > 1 && session[:version] == 'one_player'
+    $game.send(session[:player]).place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
+    p "----------"
+    p "Player's ships:"
+    p $game.send(session[:player])
+    p $game.send(session[:player]).board.ships
+    p "------------"
+    p "Opponent's ships:"
+    p $game.send(session[:player]).opponent
+    p $game.send(session[:player]).opponent.board.ships
+    p "-----------"
+    if $game.player_1.board.ships.count > 1 && session[:version] == 'one_player'
       redirect '/gameplay_one_player'
-    elsif session[:player].board.ships.count > 1 && session[:version] == 'two_player'
+    elsif $game.send(session[:player]).board.ships.count > 1 && session[:version] == 'two_player'
       redirect '/gameplay_two_player'
     end
     erb :game
@@ -91,9 +102,7 @@ class BattleshipsWeb < Sinatra::Base
   end
 
   get '/gameplay_two_player' do
-    p session[:player].board.ships
-    p "____________"
-    p session[:player].opponent.board.ships
+
     erb :gameplay
   end
 
