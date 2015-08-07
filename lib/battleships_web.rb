@@ -31,6 +31,8 @@ class BattleshipsWeb < Sinatra::Base
     $players << @player
     redirect '/register' if session[:name] == ""
     if session[:version] == 'one_player'
+      session[:player] = $game.player_1
+
       redirect '/game'
     else
       redirect '/welcome'
@@ -41,16 +43,16 @@ class BattleshipsWeb < Sinatra::Base
 
   get '/welcome' do
     if $players.count == 1
-      @player_1 = session[:name]
       session[:player] = $game.player_1
-      p $game.object_id
-      p "---------"
+      p $game
+      p "------"
       p session
+      p "------"
     else
-      @player_2 = session[:name]
+      $player_2 = session[:name]
       session[:player] = $game.player_2
-      p $game.object_id
-      p "------------"
+      p $game
+      p "-------"
       p session
     end
     redirect '/game' if $players.count == 2
@@ -64,17 +66,18 @@ class BattleshipsWeb < Sinatra::Base
 
   post '/game' do
     @parameters = params
-    $game.player_1.place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
+    session[:player].place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
 
-    if $game.player_1.board.ships.count > 1 && session[:version] == 'one_player'
+    if session[:player].board.ships.count > 1 && session[:version] == 'one_player'
       redirect '/gameplay_one_player'
-    # elsif $game.pl
-  end
-
+    elsif session[:player].board.ships.count > 1 && session[:version] == 'two_player'
+      redirect '/gameplay_two_player'
+    end
     erb :game
   end
 
   get '/gameplay_one_player' do
+    @computer = "Computer"
     place_computer_ships
     erb :gameplay
   end
@@ -83,6 +86,21 @@ class BattleshipsWeb < Sinatra::Base
     @coordinate = params[:coordinate]
     @player_1_result = $game.player_1.shoot(@coordinate.to_sym)
     @player_2_result = $game.player_2.shoot(generate_computer_coordinates)
+    redirect '/winner' if $game.has_winner?
+    erb :gameplay
+  end
+
+  get '/gameplay_two_player' do
+    p session[:player].board.ships
+    p "____________"
+    p session[:player].opponent.board.ships
+    erb :gameplay
+  end
+
+  post '/gameplay_two_player' do
+    @coordinate = params[:coordinate]
+    @player_1_result = $game.player_1.shoot(@coordinate.to_sym)
+    @player_2_result = $game.player_2.shoot(@coordinate.to_sym)
     redirect '/winner' if $game.has_winner?
     erb :gameplay
   end
