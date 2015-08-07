@@ -37,12 +37,11 @@ class BattleshipsWeb < Sinatra::Base
   get '/welcome' do
     if $players.count == 1
       @player_1 = session[:name]
-      # p "Welcome #{@player_1}.  You are Player 1"
+      session[:player] = :player_1
     else
       @player_2 = session[:name]
-      # p "Welcome #{@player_2}.  You are Player 2"
+      session[:player] = :player_2
     end
-
     redirect '/game' if $players.count == 2
     erb :welcome
   end
