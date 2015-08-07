@@ -20,5 +20,8 @@
       </label>
       <input type='submit' value='Fire!'>
     </form>
+    <% if @coordinate_error %>
+      Please try a different coordinate.
+    <% end %>
   </div>
 </div>

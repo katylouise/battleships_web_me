@@ -26,7 +26,7 @@ class BattleshipsWeb < Sinatra::Base
     redirect '/register' if session[:name] == ""
 
     if session[:version] == 'one_player'
-      session[:player] = $game.player_1
+      session[:player] = :player_1
       redirect '/game'
     else
       redirect '/welcome'
@@ -52,6 +52,7 @@ class BattleshipsWeb < Sinatra::Base
     erb :welcome
   end
 
+  #Possibly use session ids?
   def change_players!
     current_player = session[:current_player]
     return session[:current_player] = :player_1 unless current_player
@@ -69,7 +70,11 @@ class BattleshipsWeb < Sinatra::Base
   post '/game' do
     p session
     @parameters = params
-    $game.send(session[:player]).place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
+    begin
+      $game.send(session[:player]).place_ship(Ship.send(@parameters[:ship].to_sym), @parameters[:coordinate].to_sym, @parameters[:direction].to_sym)
+    rescue RuntimeError
+      @coordinate_error = true
+    end
     p "----------"
     p "Player's ships:"
     p $game.send(session[:player])
@@ -95,8 +100,13 @@ class BattleshipsWeb < Sinatra::Base
 
   post '/gameplay_one_player' do
     @coordinate = params[:coordinate]
-    @player_1_result = $game.player_1.shoot(@coordinate.to_sym)
-    @player_2_result = $game.player_2.shoot(generate_computer_coordinates)
+    begin
+      @player_1_result = $game.player_1.shoot(@coordinate.to_sym)
+      @player_2_result = $game.player_2.shoot(generate_computer_coordinates)
+    rescue RuntimeError
+      @coordinate_error = true
+    end
+
     redirect '/winner' if $game.has_winner?
     erb :gameplay
   end

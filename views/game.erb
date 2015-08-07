@@ -28,5 +28,7 @@
       <input type='submit' value='Submit'>
   </form>
   <br>
-
+  <% if @coordinate_error %>
+    Please try a different coordinate.
+  <% end %>
 </div>
